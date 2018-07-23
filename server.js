@@ -30,7 +30,6 @@ io.sockets.on('connection' , function (socket) {
     // send messages
     socket.on('send message', function (data) {
         console.log(data);
-
         io.sockets.emit('new message', {msg:data, user:socket.username});
     });
 
@@ -41,6 +40,11 @@ io.sockets.on('connection' , function (socket) {
         socket.username = data;
         users.push(socket.username);
         updateUsernames();
+    });
+
+    socket.on('typing', function (data) {
+        socket.broadcast.emit('typing', data);
+        console.log(data);
     });
 
     function updateUsernames() {
