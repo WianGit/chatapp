@@ -1,0 +1,108 @@
+<html>
+<head>
+    <title>Wian Chat</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+        body{
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div id="user-details" class="row">
+        <div class="col-md-12">
+            <form action="" id="userForm">
+                <div class="form-group">
+                    <label for="message">Enter Username</label>
+                    <input class="form-control" name="username" id="username"">
+                    <br>
+                    <input type="submit" class="btn btn-success" value="Start">
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!--messagesi-->
+    <div class="row" id="message-area" style="display: none;">
+        <div class="col-md-4">
+            <div class="well">
+                <h3> Online Users</h3>
+                <ul class="list-group" id="users"> </ul>
+            </div>
+
+        </div>
+        <div class="col-md-8">
+            <div class="chat"  id="chat"></div>
+
+            <form action="" id="messageForm">
+                <div class="form-group">
+                    <label for="message">Enter Message</label>
+                    <textarea class="form-control" name="message" id="message" cols="30" rows="10"></textarea>
+                    <br>
+                    <input type="submit" class="btn btn-success" value="Send">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(function () {
+
+        var socket = io.connect();
+        var messageForm = $("#messageForm");
+        var message = $("#message");
+        var chat = $("#chat");
+        var username = $("#username");
+        var userForm = $("#userForm");
+        var userdisplay = $("#user-details");
+        var messagedisplay = $("#message-area");
+        var users = $("#users");
+
+        messageForm.submit(function (e) {
+            e.preventDefault();
+            socket.emit('send message', message.val());
+            message.val('');
+        });
+
+        socket.on('new message', function (data) {
+            chat.append('<div class="well"><strong> '+ data.user+ ': </strong> ' + data.msg+ ' </div>');
+        });
+
+        userForm.submit(function (e) {
+            e.preventDefault();
+            socket.emit('new user', username.val(), function (data) {
+                if(data){
+
+                    userdisplay.hide();
+                    messagedisplay.fadeIn();
+
+                }
+            });
+            username.val('');
+        });
+
+        socket.on('get users', function (data) {
+            var html = '';
+            for (i =0 ; i < data.length; i++){
+                html+= '<li class="list-group-item">'+data[i]+'</li>';
+            }
+            users.html(html);
+        });
+
+    })
+</script>
+
+</body>
+</html>
