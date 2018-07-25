@@ -9,7 +9,9 @@
   "author": "Wian",
   "license": "ISC",
   "dependencies": {
+    "consolidate": "^0.15.1",
     "express": "^4.16.3",
+    "mustache": "^2.3.0",
     "socket.io": "^2.1.1"
   }
 }

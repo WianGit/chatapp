@@ -1,0 +1,54 @@
+<html>
+<head>
+    <title>API</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <style>
+        body{
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div id="user-details" class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <h1>Devices Picked up:</h1>
+                <h1><%= id %></h1>
+                <h1>{{ id }}</h1>
+                <div class="chat"  id="devices"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        var socket = io.connect();
+        var devices = $("#devices");
+        var id= {{ id }};
+
+        if( {{ id }} ){
+            id = {{ id }};
+            socket.emit('send api', id);
+            socket.on('new api', function (data) {
+                console.log(data);
+                devices.append('<div class="well"><strong> '+ data.id+ ': </strong></div>');
+            });
+        }else{
+            socket.on('new api', function (data) {
+                console.log(data);
+                devices.append('<div class="well"><strong> '+ data.id+ ': </strong></div>');
+            });
+        }
+    })
+</script>
+
+</body>
+</html>
